@@ -18,6 +18,7 @@
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/toastr.min.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -51,7 +52,7 @@
                         @else
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }}
+                                    {{ Auth::user()->name }} <span class="caret"></span>
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
@@ -61,7 +62,7 @@
                                         {{ __('Logout') }}
                                     </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
                                     </form>
                                 </div>
@@ -71,10 +72,45 @@
                 </div>
             </div>
         </nav>
+        <div class="container">
+            <div class="row justify-content-center">
 
-        <main class="py-4">
-            @yield('content')
-        </main>
+                @if(Auth::check())
+                <div class="col-md-4">
+                    <main class="py-4">
+                        <ul class="list-group">
+                            <li class="list-group-item list-group-item-action disabled"><h5>Navigation</h5></li>
+                            <li class="list-group-item"><a href="{{ route('home') }}">Home</a></li>
+                            <li class="list-group-item"><a href="{{route('categories')}}">All categories</a></li>
+                            <li class="list-group-item"><a href="{{route('category.create')}}">Create category</a></li>
+                            <li class="list-group-item"><a href="{{ route('post.create') }}">Create new</a></li>
+                            <li class="list-group-item"><a href="{{route('posts')}}">All news</a></li>
+
+                        </ul>
+                    </main>
+                </div>
+                @endif
+
+                <div class="@if(Auth::check()) col-md-8 @else col-md-12 @endif">
+                    <main class="py-4">
+                        @yield('content')
+                    </main>
+                </div>
+            </div>
+        </div>
+
     </div>
+    <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/toastr.min.js') }}"></script>
+    <script>
+        @if(Session::has('succes'))
+        toastr.success('{{ Session::get('succes') }}');
+
+        @endif
+        @if(Session::has('info'))
+        toastr.info('{{ Session::get('info') }}');
+
+        @endif
+    </script>
 </body>
 </html>
